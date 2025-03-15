@@ -1,35 +1,51 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown, Menu } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import LogoEmpresa from '../assets/Logo_Empresa.png';
 import Button from '../ComponentsUI/Button.jsx';
 import { AuthContext } from '../../context/AuthContext';
+import { getCategorias } from '../services/productService';
 
 const Header = () => {
   const { isLoggedIn, user, logout } = useContext(AuthContext);
+  const [categorias, setCategorias] = useState([]);
+
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const data = await getCategorias();
+        setCategorias(data);
+      } catch (error) {
+        console.error('Error al obtener las categorías:', error);
+      }
+    };
+    fetchCategorias();
+  }, []);
 
   const menuCategorias = (
     <Menu>
-      <Menu.Item key="1"><Link to="/categorias/guitarras">Guitarras</Link></Menu.Item>
-      <Menu.Item key="2"><Link to="/categorias/pianos">Pianos</Link></Menu.Item>
-      <Menu.Item key="3"><Link to="/categorias/percusion">Percusión</Link></Menu.Item>
+      {categorias.map((categoria) => (
+        <Menu.Item key={categoria.id}>
+          <Link to={`/category/${categoria.id}`}>{categoria.nombre}</Link>
+        </Menu.Item>
+      ))}
     </Menu>
   );
 
-  const menuInstrumentos = (
-    <Menu>
-      <Menu.Item key="1"><Link to="/instrumentos/cuerda">Cuerda</Link></Menu.Item>
-      <Menu.Item key="2"><Link to="/instrumentos/viento">Viento</Link></Menu.Item>
-      <Menu.Item key="3"><Link to="/instrumentos/percusion">Percusión</Link></Menu.Item>
-    </Menu>
-  );
 
   const menuMarcas = (
     <Menu>
-      <Menu.Item key="1"><Link to="/marcas/yamaha">Yamaha</Link></Menu.Item>
-      <Menu.Item key="2"><Link to="/marcas/fender">Fender</Link></Menu.Item>
-      <Menu.Item key="3"><Link to="/marcas/gibson">Gibson</Link></Menu.Item>
+      <Menu.Item key="1"><Link to="/product/brand">Yamaha</Link></Menu.Item>
+      <Menu.Item key="2"><Link to="/product/brand">Fender</Link></Menu.Item>
+      <Menu.Item key="3"><Link to="/product/brand">Gibson</Link></Menu.Item>
+    </Menu>
+  );
+
+  const menuAdministrar = (
+    <Menu>
+      <Menu.Item key="1"><Link to="/admin/users">Usuarios</Link></Menu.Item>
+      <Menu.Item key="2"><Link to="/admin/instruments">Instrumentos</Link></Menu.Item>
     </Menu>
   );
 
@@ -59,22 +75,31 @@ const Header = () => {
         <Dropdown overlay={menuCategorias}>
           <Button type="text">Categorías <DownOutlined /></Button>
         </Dropdown>
-        
-        <Dropdown overlay={menuInstrumentos}>
-          <Button type="text">Instrumentos <DownOutlined /></Button>
-        </Dropdown>
+
+        <Button type="text">
+          <Link to="/car" style={{ color: '#000', textDecoration: 'none' }}>
+            Carrito de Compras
+          </Link>
+        </Button>
+
 
         <Dropdown overlay={menuMarcas}>
           <Button type="text">Marcas <DownOutlined /></Button>
         </Dropdown>
 
+        {isLoggedIn && user?.rol === 'admin' && (
+          <Dropdown overlay={menuAdministrar}>
+            <Button type="text">Administrar <DownOutlined /></Button>
+          </Dropdown>
+        )}
+
         <Button type="text">
-          <Link to="/contacto" style={{ color: '#000', textDecoration: 'none' }}>
+          <Link to="/contact" style={{ color: '#000', textDecoration: 'none' }}>
             Contáctanos
           </Link>
         </Button>
 
-        {!isLoggedIn && (
+        {!isLoggedIn ? (
           <>
             <Button type="text">
               <Link to="/login" style={{ color: '#000', textDecoration: 'none' }}>
@@ -83,13 +108,11 @@ const Header = () => {
             </Button>
             <Button type="text">
               <Link to="/register" style={{ color: '#000', textDecoration: 'none' }}>
-                Registar
+                Registrarse
               </Link>
             </Button>
           </>
-        )}
-
-        {isLoggedIn && (
+        ) : (
           <Dropdown overlay={
             <Menu>
               <Menu.Item key="1">

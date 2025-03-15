@@ -7,7 +7,7 @@ import api from "./api";
  * @param {string} password - Contraseña del usuario.
  * @returns {Promise} - Datos de la respuesta del servidor.
  */
-export const registerUser = async (email, username, password, nombre, apellido) => {
+export const registerUser = async (email, username, password, nombre, apellido, rol) => {
     try {
         console.log("Registering service " + email + " user " + username);
         const response = await api.post("/register", {
@@ -16,6 +16,7 @@ export const registerUser = async (email, username, password, nombre, apellido) 
             password,
             nombre,
             apellido,
+            rol,
         });
         console.log(response.data);
         return response.data;

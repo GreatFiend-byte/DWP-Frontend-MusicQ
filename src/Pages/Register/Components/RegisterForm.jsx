@@ -27,7 +27,7 @@ const RegisterForm = () => {
 
     try {
       const { email, username, password, nombre, apellido } = values;
-      await registerUser(email, username, password, nombre, apellido);
+      await registerUser(email, username, password, nombre, apellido, 'user'); // por default el rol es 'user'
 
       message.success('Usuario registrado con éxito');
 

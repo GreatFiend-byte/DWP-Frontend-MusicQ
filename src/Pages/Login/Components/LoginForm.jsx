@@ -1,7 +1,8 @@
 import React, { useContext } from 'react';
-import { Form, Checkbox, Input, message } from 'antd';
+import { Form, Input, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../../ComponentsUI/Button.jsx';
+import Checkbox from '../../../ComponentsUI/Checkbox.jsx';
 import { loginUser } from '../../../services/authService';
 import { AuthContext } from '../../../../context/AuthContext';
 
